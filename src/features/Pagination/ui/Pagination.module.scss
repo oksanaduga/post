@@ -1,0 +1,22 @@
+.text {
+  color: #434b58;
+}
+
+.button {
+  border: 1px solid #afb7c3;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 20px;
+  width: 30px;
+  height: 20px;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:disabled {
+    opacity: 30%;
+    cursor: not-allowed;
+  }
+}
