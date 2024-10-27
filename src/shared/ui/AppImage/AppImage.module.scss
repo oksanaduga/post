@@ -1,0 +1,29 @@
+.AppImage {
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(175, 175, 175);
+  border-radius: 8px;
+}
+
+.size_s {
+  @media (min-width: 680px) {
+    width: 320px;
+    height: 200px;
+  }
+
+  @media (min-width: 1204px) {
+    width: 600px;
+    height: 400px;
+  }
+
+  @media (min-width: 1920px) {
+    width: 800px;
+    height: 600px;
+  }
+}

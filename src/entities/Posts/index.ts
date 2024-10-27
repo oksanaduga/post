@@ -1,13 +1,12 @@
 export {
+  getIsInit,
   getPostsPage,
   getPostsPageError,
   getPostsPageIsLoading,
-  getIsInit,
 } from "./model/selectors/posts";
-
 export {
   fetchPosts,
+  postsPageActions,
   selectAllPosts,
   selectPostById,
-  postsPageActions,
 } from "./model/slice/postsPageSlice";

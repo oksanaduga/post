@@ -1,18 +1,21 @@
+import { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { useCallback, useState } from "react";
-import { useAppDispatch } from "@/shared/hooks/useAppDispatch/useAppDispatch";
-import { Pagination } from "@/features/Pagination";
+
 import { PostItem } from "@/entities/Post/ui/PostItem";
-import classes from "./PostsPage.module.scss";
 import {
   fetchPosts,
+  getIsInit,
   getPostsPage,
   getPostsPageError,
   getPostsPageIsLoading,
   postsPageActions,
   selectAllPosts,
-  getIsInit,
 } from "@/entities/Posts";
+import { Pagination } from "@/features/Pagination";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch/useAppDispatch";
+import { Loader } from "@/shared/ui/Loader/Loader";
+
+import classes from "./PostsPage.module.scss";
 
 export const PostsPage = () => {
   const dispatch = useAppDispatch();
@@ -46,7 +49,11 @@ export const PostsPage = () => {
           contentLength={posts.length}
         />
       )}
-      {isLoadingPosts && <div>loading</div>}
+      {isLoadingPosts && (
+        <div className={classes.loaderWrapper}>
+          <Loader />
+        </div>
+      )}
       {isEmpty ? (
         <div>empty list</div>
       ) : (

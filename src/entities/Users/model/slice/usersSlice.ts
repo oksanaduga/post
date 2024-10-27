@@ -1,32 +1,47 @@
 import {
-  EntityId,
-  PayloadAction,
   createAsyncThunk,
   createEntityAdapter,
   createSlice,
+  EntityId,
+  PayloadAction,
 } from "@reduxjs/toolkit";
+import { AxiosResponse } from "axios";
 
-import axios from "axios";
 import { RootState, ThunkConfig } from "@/app/store/store";
-import { User, UsersSchema } from "../types/users";
+import { User } from "@/entities/User/model/types/user";
+
+import { UsersSchema } from "../types/users";
 
 export const fetchUsers = createAsyncThunk<
   User[],
-  number | undefined,
+  number[],
   ThunkConfig<string>
->("users/fetchUsers", async (_, thunkAPI) => {
-  try {
-    const response = await axios.get(
-      "https://jsonplaceholder.typicode.com/users"
-    );
+>("users/fetchUsers", async (ids, thunkAPI) => {
+  const { extra, rejectWithValue } = thunkAPI;
 
-    if (!response.data) {
-      throw new Error();
+  try {
+    const usersPromises: Promise<AxiosResponse<User>>[] = [];
+
+    for (const id of ids) {
+      const request = extra.api.get(`/usersxd/${id}`);
+      usersPromises.push(request);
     }
 
-    return response.data;
+    const usersResponse = await Promise.allSettled(usersPromises);
+    const fulfilledResults: User[] = [];
+
+    usersResponse.forEach((result) => {
+      if (result.status === "fulfilled") {
+        fulfilledResults.push(result.value.data);
+      } else {
+        console.error("Error:", result.reason);
+      }
+    });
+
+    return fulfilledResults;
   } catch (error) {
-    return thunkAPI.rejectWithValue("error");
+    console.log(error);
+    return rejectWithValue("error");
   }
 });
 

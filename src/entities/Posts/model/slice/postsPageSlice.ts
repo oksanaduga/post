@@ -1,43 +1,48 @@
 import {
-  EntityId,
-  PayloadAction,
   createAsyncThunk,
   createEntityAdapter,
   createSlice,
+  EntityId,
+  PayloadAction,
 } from "@reduxjs/toolkit";
-import { PostsPageSchema } from "../types/postsPage";
-import axios from "axios";
+
 import { RootState, ThunkConfig } from "@/app/store/store";
-import { getPostsPage } from "../selectors/posts";
-import { fetchUsers } from "@/entities/Users/model/slice/usersSlice";
 import { Post } from "@/entities/Post";
+import { fetchUsers } from "@/entities/Users/model/slice/usersSlice";
+
+import { LIMIT } from "../../constants";
+import { getPostsPage } from "../selectors/posts";
+import { PostsPageSchema } from "../types/postsPage";
 
 export const fetchPosts = createAsyncThunk<
   Post[],
   number | undefined,
   ThunkConfig<string>
 >("posts/fetchPosts", async (_, thunkAPI) => {
+  const { extra, getState, dispatch, rejectWithValue } = thunkAPI;
+
   try {
-    const page = getPostsPage(thunkAPI.getState());
-    const response = await axios.get(
-      "https://jsonplaceholder.typicode.com/posts",
-      {
-        params: {
-          _limit: 10,
-          _page: page,
-        },
-      }
-    );
+    const page = getPostsPage(getState());
+    const response = await extra.api.get("/posts", {
+      params: {
+        _limit: LIMIT,
+        _page: page,
+      },
+    });
 
     if (!response.data) {
       throw new Error();
     }
 
-    thunkAPI.dispatch(fetchUsers());
+    const usersId = response.data.map((data: Post) => data.userId);
+
+    dispatch(fetchUsers(usersId));
 
     return response.data;
   } catch (error) {
-    return thunkAPI.rejectWithValue("error.message");
+    //TODO
+    console.log(error);
+    return rejectWithValue("error.message");
   }
 });
 
